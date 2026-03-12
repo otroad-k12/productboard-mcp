@@ -19,9 +19,11 @@ npm test -- --coverage
 
 ### Run remote MCP test (optional)
 ```bash
-RUN_REMOTE_MCP_TESTS=true REMOTE_MCP_BASE_URL=https://productboard-mcp-production.up.railway.app \
+RUN_REMOTE_MCP_TESTS=true REMOTE_MCP_URL=https://productboard-mcp-production.up.railway.app/mcp \
   npm test -- tests/e2e/remote-mcp-ai-summary.test.ts
 ```
+
+If you prefer to supply the base host instead, set `REMOTE_MCP_BASE_URL` (the test will append `/mcp`).
 
 ### Run tests in watch mode
 ```bash
