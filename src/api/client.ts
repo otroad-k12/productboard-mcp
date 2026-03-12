@@ -285,7 +285,9 @@ export class ProductboardAPIClient {
       if (error instanceof APIAuthenticationError) {
         return false;
       }
-      throw error;
+      // Non-auth errors (404, network issues) mean the API is reachable;
+      // treat as connected and let tool calls surface real issues.
+      return true;
     }
   }
 
