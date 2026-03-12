@@ -68,7 +68,7 @@ export class ListReleasesTool extends BaseTool<ListReleasesParams> {
     this.logger.info('Listing releases');
 
     // Only pass filters supported by the API - not limit/offset
-    const queryParams: Record<string, any> = { type: 'release' };
+    const queryParams: Record<string, any> = { type: JSON.stringify('release') };
     if (params.release_group_id) queryParams.release_group_id = params.release_group_id;
     if (params.status) queryParams.status = params.status;
     if (params.date_from) queryParams.date_from = params.date_from;

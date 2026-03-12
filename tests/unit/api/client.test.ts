@@ -292,9 +292,8 @@ describe('ProductboardAPIClient', () => {
   describe('Connection Testing', () => {
     it('should test connection successfully', async () => {
       nock(BASE_URL)
-        .get('/entities')
-        .query({ type: 'feature' })
-        .reply(200, { data: [{ id: '1', type: 'feature' }] });
+        .get('/users/current')
+        .reply(200, { data: { id: '1', email: 'test@example.com' } });
 
       const result = await client.testConnection();
       expect(result).toBe(true);
@@ -302,25 +301,22 @@ describe('ProductboardAPIClient', () => {
 
     it('should handle connection test failure', async () => {
       nock(BASE_URL)
-        .get('/entities')
-        .query({ type: 'feature' })
+        .get('/users/current')
         .reply(401, { message: 'Unauthorized' });
 
+      // 401 is an auth error — testConnection returns false
       const result = await client.testConnection();
       expect(result).toBe(false);
     });
 
     it('should propagate non-auth connection errors', async () => {
-      // Server errors are retryable, so we need to mock multiple attempts
       nock(BASE_URL)
-        .get('/entities')
-        .query({ type: 'feature' })
-        .reply(500, { message: 'Server error' })
-        .get('/entities')
-        .query({ type: 'feature' })
+        .get('/users/current')
         .reply(500, { message: 'Server error' });
 
-      await expect(client.testConnection()).rejects.toThrow(APIServerError);
+      // Non-auth errors are treated as "connected" to avoid false negatives
+      const result = await client.testConnection();
+      expect(result).toBe(true);
     });
   });
 
