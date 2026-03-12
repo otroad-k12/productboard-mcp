@@ -5,7 +5,11 @@ import { UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js';
 import { InMemoryOAuthClientProvider } from '@modelcontextprotocol/sdk/examples/client/simpleOAuthClientProvider.js';
 
 const RUN_REMOTE_TESTS = process.env.RUN_REMOTE_MCP_TESTS === 'true';
+const REMOTE_MCP_URL = process.env.REMOTE_MCP_URL;
 const REMOTE_MCP_BASE_URL = process.env.REMOTE_MCP_BASE_URL ?? 'https://productboard-mcp-production.up.railway.app';
+const REMOTE_MCP_ENDPOINT = REMOTE_MCP_URL
+  ? new URL(REMOTE_MCP_URL)
+  : new URL('/mcp', REMOTE_MCP_BASE_URL);
 
 const describeRemote = RUN_REMOTE_TESTS ? describe : describe.skip;
 
@@ -77,7 +81,7 @@ describeRemote('Remote MCP AI project summary', () => {
       (redirectUrl) => resolveAuthorizationUrl?.(redirectUrl)
     );
 
-    transport = new StreamableHTTPClientTransport(new URL('/mcp', REMOTE_MCP_BASE_URL), {
+    transport = new StreamableHTTPClientTransport(REMOTE_MCP_ENDPOINT, {
       authProvider: oauthProvider,
     });
 
