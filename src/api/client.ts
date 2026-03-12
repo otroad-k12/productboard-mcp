@@ -279,7 +279,7 @@ export class ProductboardAPIClient {
         this.logger.debug("Skipping API connection test in development mode");
         return true;
       }
-      await this.get('/users/current');
+      await this.get('/features');
       return true;
     } catch (error) {
       if (error instanceof APIAuthenticationError) {
