@@ -89,14 +89,14 @@ export class ListFeaturesTool extends BaseTool<ListFeaturesParams> {
 
   protected async executeInternal(params: ListFeaturesParams): Promise<unknown> {
     // Build query parameters for v2 /entities endpoint
-    const queryParams: Record<string, any> = { type: 'feature' };
+    // The API expects `type` as a JSON-encoded string value (e.g. "feature" with quotes)
+    const queryParams: Record<string, any> = { type: JSON.stringify('feature') };
 
     // Add supported parameters only
     if (params.status) queryParams.status = params.status;
     if (params.product_id) queryParams.product_id = params.product_id;
     if (params.component_id) queryParams.component_id = params.component_id;
     if (params.owner_email) queryParams.owner_email = params.owner_email;
-    if (params.search) queryParams.search = params.search;
     if (params.tags && params.tags.length > 0) {
       queryParams.tags = params.tags.join(',');
     }
@@ -104,11 +104,21 @@ export class ListFeaturesTool extends BaseTool<ListFeaturesParams> {
     const response = await this.apiClient.get('/entities', queryParams);
 
     const features = extractResponseData(response);
-    
+
+    // Apply client-side search filtering (/v2/entities does not support a `search` query param)
+    let filteredFeatures = features;
+    if (params.search) {
+      const searchLower = params.search.toLowerCase();
+      filteredFeatures = features.filter((feature: any) =>
+        (feature.name || '').toLowerCase().includes(searchLower) ||
+        (feature.description || '').toLowerCase().includes(searchLower)
+      );
+    }
+
     // Apply client-side pagination if requested
     const requestedLimit = params.limit || 20;
     const requestedOffset = params.offset || 0;
-    const paginatedFeatures = features.slice(requestedOffset, requestedOffset + requestedLimit);
+    const paginatedFeatures = filteredFeatures.slice(requestedOffset, requestedOffset + requestedLimit);
     
     // Helper function to strip HTML tags
     const stripHtml = (html: string): string => {
@@ -135,7 +145,7 @@ export class ListFeaturesTool extends BaseTool<ListFeaturesParams> {
     
     // Create a text summary of the features
     const summary = formattedFeatures.length > 0
-      ? `Found ${features.length} features total, showing ${formattedFeatures.length} features:\n\n` +
+      ? `Found ${filteredFeatures.length} features total, showing ${formattedFeatures.length} features:\n\n` +
         formattedFeatures.map((f, i) => 
           `${i + 1}. ${f.name}\n` +
           `   Status: ${f.status}\n` +

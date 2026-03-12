@@ -18,7 +18,7 @@ export class BearerTokenAuth {
     }
 
     try {
-      const url = `${this.baseUrl}/features`;
+      const url = `${this.baseUrl}/users/current`;
       this.logger.debug('Bearer token validation URL', { url });
       const response = await axios.get(url, {
         headers: this.getHeaders(token),
