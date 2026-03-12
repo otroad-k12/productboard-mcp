@@ -21,6 +21,16 @@ const clientMetadata = {
   tos_uri: undefined,
 };
 
+interface ToolContentBlock {
+  type: string;
+  text?: string;
+}
+
+interface ToolCallResult {
+  content?: ToolContentBlock[];
+  isError?: boolean;
+}
+
 describeRemote('Remote MCP AI project summary', () => {
   jest.setTimeout(30000);
 
@@ -86,8 +96,8 @@ describeRemote('Remote MCP AI project summary', () => {
     }
   };
 
-  const extractToolText = (result: any): string => {
-    const textBlock = result?.content?.find((block: any) => block?.type === 'text');
+  const extractToolText = (result: ToolCallResult): string => {
+    const textBlock = result.content?.find((block) => block?.type === 'text');
     return typeof textBlock?.text === 'string' ? textBlock.text : '';
   };
 
@@ -102,15 +112,15 @@ describeRemote('Remote MCP AI project summary', () => {
   });
 
   it('summarizes AI-related projects that are in progress or future scheduled', async () => {
-    const inProgress = await client.callTool({
+    const inProgress = (await client.callTool({
       name: 'pb_feature_list',
       arguments: { status: 'in_progress', search: 'ai' },
-    });
+    })) as ToolCallResult;
 
-    const futureScheduled = await client.callTool({
+    const futureScheduled = (await client.callTool({
       name: 'pb_feature_list',
       arguments: { status: 'new', search: 'ai' },
-    });
+    })) as ToolCallResult;
 
     const inProgressText = extractToolText(inProgress);
     const futureScheduledText = extractToolText(futureScheduled);
@@ -125,8 +135,10 @@ describeRemote('Remote MCP AI project summary', () => {
       futureScheduledText || 'No future scheduled projects found.',
     ].join('\n');
 
-    expect(inProgressText).not.toBe('');
-    expect(futureScheduledText).not.toBe('');
+    expect(inProgress.isError).not.toBe(true);
+    expect(futureScheduled.isError).not.toBe(true);
+    expect(inProgressText).toMatch(/Found|No features found/);
+    expect(futureScheduledText).toMatch(/Found|No features found/);
     expect(summary).toContain('AI-related projects summary:');
   });
 });
