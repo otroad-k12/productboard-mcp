@@ -17,6 +17,12 @@ npm test -- tests/unit/tools/features/create-feature.test.ts
 npm test -- --coverage
 ```
 
+### Run remote MCP test (optional)
+```bash
+RUN_REMOTE_MCP_TESTS=true REMOTE_MCP_BASE_URL=https://productboard-mcp-production.up.railway.app \
+  npm test -- tests/e2e/remote-mcp-ai-summary.test.ts
+```
+
 ### Run tests in watch mode
 ```bash
 npm test -- --watch
