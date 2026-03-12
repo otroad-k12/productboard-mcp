@@ -300,7 +300,8 @@ describe('Error Utility Functions', () => {
       const unknownError = new Error('Unknown error');
       const customError = new ProductboardAPIError('Custom', 'CUSTOM');
       
-      expect(isRetryableError(unknownError)).toBe(true);
+      // Generic errors (not ECONNRESET/ETIMEDOUT) are not retried
+      expect(isRetryableError(unknownError)).toBe(false);
       expect(isRetryableError(customError)).toBe(false);
     });
 
