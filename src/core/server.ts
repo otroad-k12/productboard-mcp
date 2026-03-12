@@ -235,6 +235,7 @@ export class ProductboardMCPServer {
       const oauthProvider = new SimpleOAuthProvider();
 
       const app = express();
+      app.set('trust proxy', 1); // Railway sits behind a load balancer that sets X-Forwarded-For
       app.use(express.json());
 
       // CORS — required for Claude web UI (claude.ai) and other browser-based MCP clients

@@ -44,8 +44,10 @@ export class BearerTokenAuth {
         }
       }
       
-      this.logger.error('Token validation error', { error: error instanceof Error ? error.message : error });
-      return false;
+      // Non-401/403 errors (404, 400, network issues) mean we can't confirm validity
+      // but also can't confirm invalidity — proceed and let tool calls surface real auth errors.
+      this.logger.warn('Token validation inconclusive, proceeding', { error: error instanceof Error ? error.message : error });
+      return true;
     }
   }
 
