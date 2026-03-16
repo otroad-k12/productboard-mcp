@@ -63,7 +63,7 @@ export class ListObjectivesTool extends BaseTool<ListObjectivesParams> {
     this.logger.info('Listing objectives');
 
     // Only pass filters supported by the API, not pagination params
-    const queryParams: Record<string, any> = { type: 'objective' };
+    const queryParams: Record<string, any> = { type: JSON.stringify('objective') };
     if (params.status) queryParams.status = params.status;
     if (params.owner_email) queryParams.owner_email = params.owner_email;
     if (params.period) queryParams.period = params.period;
