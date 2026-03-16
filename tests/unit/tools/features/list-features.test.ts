@@ -110,8 +110,8 @@ describe('ListFeaturesTool', () => {
 
       const result = await tool.execute({});
 
-      // v2 API: uses /entities with type=feature
-      expect(mockClient.get).toHaveBeenCalledWith('/entities', { type: 'feature' });
+      // v2 API: uses /entities with type as JSON-encoded string
+      expect(mockClient.get).toHaveBeenCalledWith('/entities', { type: '"feature"' });
       // Result should be MCP content format
       expect(result).toHaveProperty('content');
       expect(result.content[0]).toHaveProperty('type', 'text');
@@ -131,13 +131,13 @@ describe('ListFeaturesTool', () => {
 
       await tool.execute(filters);
 
+      // search is handled client-side; type must be JSON-encoded
       expect(mockClient.get).toHaveBeenCalledWith('/entities', {
-          type: 'feature',
+          type: '"feature"',
           status: 'in_progress',
           product_id: 'prod_789',
           owner_email: 'john.doe@example.com',
           tags: 'mobile,security',
-          search: 'authentication',
       });
     });
 
