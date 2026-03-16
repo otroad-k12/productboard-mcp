@@ -89,8 +89,7 @@ export class ListFeaturesTool extends BaseTool<ListFeaturesParams> {
 
   protected async executeInternal(params: ListFeaturesParams): Promise<unknown> {
     // Build query parameters for v2 /entities endpoint
-    // The API expects `type` as a JSON-encoded string value (e.g. "feature" with quotes)
-    const queryParams: Record<string, any> = { type: JSON.stringify('feature') };
+    const queryParams: Record<string, any> = { type: 'feature' };
 
     // Add supported parameters only
     if (params.status) queryParams.status = params.status;

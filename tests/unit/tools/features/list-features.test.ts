@@ -131,7 +131,7 @@ describe('ListFeaturesTool', () => {
 
       await tool.execute(filters);
 
-      // search is handled client-side; type must be JSON-encoded
+      // search is applied client-side; /v2/entities does not support a search query param
       expect(mockClient.get).toHaveBeenCalledWith('/entities', {
           type: '"feature"',
           status: 'in_progress',
