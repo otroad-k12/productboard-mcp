@@ -131,13 +131,13 @@ describe('ListFeaturesTool', () => {
 
       await tool.execute(filters);
 
+      // search is applied client-side; /v2/entities does not support a search query param
       expect(mockClient.get).toHaveBeenCalledWith('/entities', {
           type: 'feature',
           status: 'in_progress',
           product_id: 'prod_789',
           owner_email: 'john.doe@example.com',
           tags: 'mobile,security',
-          search: 'authentication',
       });
     });
 
