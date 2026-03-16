@@ -252,6 +252,7 @@ export class ProductboardMCPServer {
       app.use(mcpAuthRouter({
         provider: oauthProvider,
         issuerUrl,
+        resourceServerUrl: new URL('/mcp', issuerUrl),
         resourceName: 'Productboard MCP Server',
       }));
 
