@@ -132,7 +132,7 @@ describe('ListKeyResultsTool', () => {
       expect(mockClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"keyResult"' },
+        params: { type: 'keyResult' },
       });
 
       expect(result.content[0].type).toBe('text');
@@ -156,7 +156,7 @@ describe('ListKeyResultsTool', () => {
         method: 'GET',
         endpoint: '/entities',
         params: {
-          type: '"keyResult"',
+          type: 'keyResult',
           objective_id: 'obj_123',
           metric_type: 'percentage',
         },
@@ -171,7 +171,7 @@ describe('ListKeyResultsTool', () => {
       expect(mockClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"keyResult"', objective_id: 'obj_123' },
+        params: { type: 'keyResult', objective_id: 'obj_123' },
       });
 
       expect(result.content[0].text).toContain('Increase Daily Active Users');
@@ -185,7 +185,7 @@ describe('ListKeyResultsTool', () => {
       expect(mockClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"keyResult"', metric_type: 'currency' },
+        params: { type: 'keyResult', metric_type: 'currency' },
       });
 
       expect(result.content[0].text).toContain('Improve User Satisfaction');
