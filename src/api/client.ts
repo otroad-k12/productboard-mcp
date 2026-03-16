@@ -100,9 +100,28 @@ export class ProductboardAPIClient {
       async (error: AxiosError) => {
         if (error.response) {
           const apiError = this.handleAPIError(error);
-          this.logger.error('API Error', apiError.toJSON());
+          this.logger.error('API Error', {
+            ...apiError.toJSON(),
+            request: {
+              method: error.config?.method?.toUpperCase(),
+              baseURL: error.config?.baseURL,
+              url: error.config?.url,
+              params: error.config?.params,
+            },
+            responseBody: error.response.data,
+          });
           throw apiError;
         }
+        this.logger.error('Network Error', {
+          message: error.message,
+          code: error.code,
+          request: {
+            method: error.config?.method?.toUpperCase(),
+            baseURL: error.config?.baseURL,
+            url: error.config?.url,
+            params: error.config?.params,
+          },
+        });
         throw error;
       },
     );
@@ -111,26 +130,44 @@ export class ProductboardAPIClient {
   private handleAPIError(error: AxiosError): ProductboardAPIError {
     const status = error.response?.status || 0;
     const data = error.response?.data as Record<string, unknown> | undefined;
-    const message = data?.message || error.message;
+
+    // Try to extract a meaningful message from various Productboard API error response formats:
+    //   { message: "..." }
+    //   { error: "..." }
+    //   { errors: [{ message: "..." }, ...] }
+    const firstError =
+      Array.isArray(data?.errors) && (data!.errors as unknown[]).length > 0
+        ? (data!.errors[0] as Record<string, unknown>)
+        : undefined;
+    const extractedMessage =
+      (data?.message as string | undefined) ||
+      (data?.error as string | undefined) ||
+      (firstError?.message as string | undefined) ||
+      error.message;
+
+    // Include the full response body in the message for visibility in tool error responses
+    const responseBodyStr = data ? ` | API response: ${JSON.stringify(data)}` : '';
+    const message = `${extractedMessage}${responseBodyStr}`;
 
     switch (status) {
       case 400:
-        return new APIValidationError(String(message), data);
+        return new APIValidationError(message, data);
       case 401:
-        return new APIAuthenticationError(String(message));
+        return new APIAuthenticationError(message);
       case 403:
-        return new APIAuthorizationError(String(message));
+        return new APIAuthorizationError(message);
       case 404:
-        return new APINotFoundError(String(message), data?.resource as string);
-      case 429:
+        return new APINotFoundError(message, data?.resource as string);
+      case 429: {
         const retryAfter = parseInt(error.response?.headers['retry-after'] || '60');
-        return new APIRateLimitError(String(message), retryAfter);
+        return new APIRateLimitError(message, retryAfter);
+      }
       default:
         if (status >= 500) {
-          return new APIServerError(String(message), status);
+          return new APIServerError(message, status);
         }
         return new ProductboardAPIError(
-          String(message),
+          message,
           'API_ERROR',
           error,
           status,
