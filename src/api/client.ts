@@ -62,6 +62,22 @@ export class ProductboardAPIClient {
       baseURL: config.baseUrl,
       timeout: config.timeout || 10000,
       validateStatus: (status) => status >= 200 && status < 300,
+      paramsSerializer: {
+        serialize: (params: Record<string, unknown>) => {
+          const parts: string[] = [];
+          for (const [key, value] of Object.entries(params)) {
+            if (value === undefined || value === null) continue;
+            if (Array.isArray(value)) {
+              for (const item of value) {
+                parts.push(`${encodeURIComponent(key)}[]=${encodeURIComponent(String(item))}`);
+              }
+            } else {
+              parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
+            }
+          }
+          return parts.join('&');
+        },
+      },
     });
 
     this.setupInterceptors();

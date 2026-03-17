@@ -153,7 +153,7 @@ describe('ListObjectivesTool', () => {
       expect(mockClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: 'objective' },
+        params: { type: ['objective'] },
       });
 
       expect(result.content[0].type).toBe('text');
@@ -179,7 +179,7 @@ describe('ListObjectivesTool', () => {
         method: 'GET',
         endpoint: '/entities',
         params: {
-          type: 'objective',
+          type: ['objective'],
           status: 'active',
           owner_email: 'jane.doe@example.com',
           period: 'quarter',
@@ -203,7 +203,7 @@ describe('ListObjectivesTool', () => {
         method: 'GET',
         endpoint: '/entities',
         params: {
-          type: 'objective',
+          type: ['objective'],
           status: 'completed',
         },
       });
