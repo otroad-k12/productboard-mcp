@@ -142,7 +142,7 @@ describe('ListReleasesTool', () => {
       expect(mockClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"release"' },
+        params: { type: 'release' },
       });
 
       expect(result.content[0].type).toBe('text');
@@ -170,7 +170,7 @@ describe('ListReleasesTool', () => {
         method: 'GET',
         endpoint: '/entities',
         params: {
-          type: '"release"',
+          type: 'release',
           release_group_id: 'group_123',
           status: 'in_progress',
           date_from: '2024-01-01',
@@ -194,7 +194,7 @@ describe('ListReleasesTool', () => {
       expect(mockClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"release"', status: 'released' },
+        params: { type: 'release', status: 'released' },
       });
 
       expect(result.content[0].text).toBe('No releases found.');

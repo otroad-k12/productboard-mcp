@@ -80,7 +80,7 @@ describe('ListProductsTool', () => {
       expect(mockApiClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"product"' },
+        params: { type: 'product' },
       });
       expect(result.content[0].text).toContain('Found 2 products');
       expect(result.content[0].text).toContain('Product A');
@@ -109,7 +109,7 @@ describe('ListProductsTool', () => {
       expect(mockApiClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"product"', parent_id: 'prod-1' },
+        params: { type: 'product', parent_id: 'prod-1' },
       });
 
       expect(result.content[0].text).toContain('Sub Product 1');
@@ -127,7 +127,7 @@ describe('ListProductsTool', () => {
       expect(mockApiClient.makeRequest).toHaveBeenCalledWith({
         method: 'GET',
         endpoint: '/entities',
-        params: { type: '"product"' },
+        params: { type: 'product' },
       });
 
       expect(result.content[0].text).toContain('Product A');

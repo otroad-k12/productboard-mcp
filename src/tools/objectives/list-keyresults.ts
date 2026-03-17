@@ -56,7 +56,7 @@ export class ListKeyResultsTool extends BaseTool<ListKeyResultsParams> {
     this.logger.info('Listing key results');
 
     // Only pass filters supported by the API - not limit/offset
-    const queryParams: Record<string, any> = { type: JSON.stringify('keyResult') };
+    const queryParams: Record<string, any> = { type: 'keyResult' };
     if (params.objective_id) queryParams.objective_id = params.objective_id;
     if (params.metric_type) queryParams.metric_type = params.metric_type;
 
